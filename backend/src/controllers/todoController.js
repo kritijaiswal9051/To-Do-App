@@ -1,10 +1,27 @@
-import { getTodosFromAirtable } from "../services/airtableService.js";
+import {
+  getTodosFromAirtable,
+  createTodoInAirtable,
+} from "../services/airtableService.js";
 import {
   storeTodoInRedis,
   getTodoFromRedis,
   removeTodoFromRedis,
 } from "../services/redisService.js";
 import { saveTodoToMongo } from "../services/mongoService.js";
+
+export const createTodo = async (req, res) => {
+  const { todo_name } = req.body;
+  if (!todo_name) {
+    return res.status(400).json({ message: "todo_name is required" });
+  }
+
+  try {
+    const newRecord = await createTodoInAirtable(todo_name);
+    res.status(201).json(newRecord);
+  } catch (error) {
+    res.status(500).json({ message: "Error creating todo in Airtable" });
+  }
+};
 
 export const fetchFromAirtable = async (req, res) => {
   try {
