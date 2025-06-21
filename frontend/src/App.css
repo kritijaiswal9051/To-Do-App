@@ -71,13 +71,24 @@ body {
 }
 
 .todo-item.done {
-  background-color: #e8f5e9;
+  background-color: #addab0;
 }
 
 .todo-item.moved {
   background-color: #e3f2fd;
-  text-decoration: line-through;
   color: #999;
+}
+
+.todo-item .todo-name {
+  flex-grow: 1;
+}
+
+.todo-item.done .todo-name {
+  text-decoration: line-through;
+}
+
+.todo-item.moved .todo-name {
+  text-decoration: line-through;
 }
 
 .todo-item span {
@@ -111,6 +122,7 @@ body {
   border-radius: 12px;
   font-size: 12px;
   font-weight: bold;
+  cursor: pointer;
 }
 
 .badge-mongo {
@@ -120,4 +132,28 @@ body {
   border-radius: 12px;
   font-size: 12px;
   font-weight: bold;
+  cursor: pointer;
+}
+
+.loader {
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top: 3px solid #fff;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.empty-state-message {
+  text-align: center;
 }

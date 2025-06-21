@@ -7,6 +7,7 @@ const API_URL = `${import.meta.env.VITE_BACKEND_URL}/api`;
 function App() {
   const [todos, setTodos] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [markingTodoId, setMarkingTodoId] = useState(null);
 
   const fetchTodos = async () => {
     setLoading(true);
@@ -26,6 +27,7 @@ function App() {
   };
 
   const markAsDone = async (id, name) => {
+    setMarkingTodoId(id);
     try {
       await axios.post(`${API_URL}/mark-as-done`, {
         todo_id: id,
@@ -38,6 +40,8 @@ function App() {
       );
     } catch (error) {
       console.error("Error marking as done:", error);
+    } finally {
+      setMarkingTodoId(null);
     }
   };
 
@@ -65,17 +69,24 @@ function App() {
       <main>
         <div className="todo-list">
           {todos.length === 0 && !loading && (
-            <div className="empty-state-message itam-center">
+            <div className="empty-state-message">
               Click the button to load data....
             </div>
           )}
           {todos.map((todo) => (
             <div key={todo.id} className={`todo-item ${todo.state}`}>
-              <span>{todo.name}</span>
+              <span className="todo-name">{todo.name}</span>
               <div className="todo-actions">
                 {todo.state === "new" && (
-                  <button onClick={() => markAsDone(todo.id, todo.name)}>
-                    ✔️ Mark Done
+                  <button
+                    onClick={() => markAsDone(todo.id, todo.name)}
+                    disabled={markingTodoId !== null}
+                  >
+                    {markingTodoId === todo.id ? (
+                      <div className="loader" />
+                    ) : (
+                      "✔️ Mark Done"
+                    )}
                   </button>
                 )}
                 {todo.state === "done" && (
