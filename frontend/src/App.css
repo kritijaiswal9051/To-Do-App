@@ -71,12 +71,13 @@ body {
 }
 
 .todo-item.done {
-  background-color: #c9e8cb;
+  background-color: #addab0;
 }
 
 .todo-item.moved {
   background-color: #e3f2fd;
   color: #999;
+  font-weight: bold;
 }
 
 .todo-item .todo-name {
@@ -124,6 +125,17 @@ body {
   font-weight: bold;
 }
 
+.badge-redis-saving {
+  background-color: #fd7e14;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+}
+
 .badge-mongo {
   background-color: #17a2b8;
   color: white;
@@ -131,6 +143,7 @@ body {
   border-radius: 12px;
   font-size: 12px;
   font-weight: bold;
+  text-align: center;
 }
 
 .loader {
@@ -168,7 +181,4 @@ body {
 
 .empty-state-message {
   text-align: center;
-}
-.pulse {
-  animation: fadeInPulse 1s infinite;
 }

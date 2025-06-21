@@ -8,14 +8,6 @@ function App() {
   const [todos, setTodos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [markingTodoId, setMarkingTodoId] = useState(null);
-  const [redisLoadingTodoId, setRedisLoadingTodoId] = useState(null);
-
-  const simulateRedisWrite = (id) => {
-    setRedisLoadingTodoId(id);
-    setTimeout(() => {
-      setRedisLoadingTodoId(null);
-    }, 1000);
-  };
 
   const fetchTodos = async () => {
     setLoading(true);
@@ -37,18 +29,32 @@ function App() {
   const markAsDone = async (id, name) => {
     setMarkingTodoId(id);
     try {
+      setTodos((currentTodos) =>
+        currentTodos.map((todo) =>
+          todo.id === id ? { ...todo, state: "saving" } : todo
+        )
+      );
+
       await axios.post(`${API_URL}/mark-as-done`, {
         todo_id: id,
         todo_name: name,
       });
-      setTodos(
-        todos.map((todo) =>
-          todo.id === id ? { ...todo, state: "done" } : todo
-        )
-      );
+
+      setTimeout(() => {
+        setTodos((currentTodos) =>
+          currentTodos.map((todo) =>
+            todo.id === id ? { ...todo, state: "done" } : todo
+          )
+        );
+        setMarkingTodoId(null);
+      }, 1000);
     } catch (error) {
       console.error("Error marking as done:", error);
-    } finally {
+      setTodos((currentTodos) =>
+        currentTodos.map((todo) =>
+          todo.id === id ? { ...todo, state: "new" } : todo
+        )
+      );
       setMarkingTodoId(null);
     }
   };
@@ -97,26 +103,12 @@ function App() {
                     )}
                   </button>
                 )}
+                {todo.state === "saving" && (
+                  <span className="badge-redis-saving">Saving to Redis...</span>
+                )}
                 {todo.state === "done" && (
                   <>
-                    <span
-                      className="badge-redis"
-                      onClick={() => simulateRedisWrite(todo.id)}
-                      style={{ cursor: "pointer" }}
-                    >
-                      {redisLoadingTodoId === todo.id ? (
-                        <>
-                          <div
-                            className="loader pulse"
-                            style={{ marginRight: 5 }}
-                          />{" "}
-                          Writing...
-                        </>
-                      ) : (
-                        "In Redis"
-                      )}
-                    </span>
-
+                    <span className="badge-redis">In Redis</span>
                     <button onClick={() => moveToDatabase(todo.id)}>
                       📤 Move to Database
                     </button>
