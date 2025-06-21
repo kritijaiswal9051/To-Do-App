@@ -1,5 +1,6 @@
 import Airtable from "airtable";
 import dotenv from "dotenv";
+import { v4 as uuidv4 } from "uuid";
 
 dotenv.config();
 
@@ -11,7 +12,7 @@ const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(
   baseId
 );
 
-const TABLE_NAME = process.env.AIRTABLE_TABLE_NAME || "todos";
+const TABLE_NAME = process.env.AIRTABLE_TABLE_NAME || "ToDo";
 
 export const getTodosFromAirtable = async () => {
   try {
@@ -19,6 +20,25 @@ export const getTodosFromAirtable = async () => {
     return records;
   } catch (error) {
     console.error("Error fetching from Airtable:", error);
+    throw error;
+  }
+};
+
+export const createTodoInAirtable = async (todoName) => {
+  try {
+    const todoId = uuidv4();
+    const newRecord = await base(TABLE_NAME).create([
+      {
+        fields: {
+          todo_name: todoName,
+          todo_id: todoId,
+          status: "Todo",
+        },
+      },
+    ]);
+    return newRecord;
+  } catch (error) {
+    console.error("Error creating todo in Airtable:", error);
     throw error;
   }
 };

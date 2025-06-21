@@ -8,6 +8,14 @@ function App() {
   const [todos, setTodos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [markingTodoId, setMarkingTodoId] = useState(null);
+  const [redisLoadingTodoId, setRedisLoadingTodoId] = useState(null);
+
+  const simulateRedisWrite = (id) => {
+    setRedisLoadingTodoId(id);
+    setTimeout(() => {
+      setRedisLoadingTodoId(null);
+    }, 1000);
+  };
 
   const fetchTodos = async () => {
     setLoading(true);
@@ -91,7 +99,24 @@ function App() {
                 )}
                 {todo.state === "done" && (
                   <>
-                    <span className="badge-redis">In Redis</span>
+                    <span
+                      className="badge-redis"
+                      onClick={() => simulateRedisWrite(todo.id)}
+                      style={{ cursor: "pointer" }}
+                    >
+                      {redisLoadingTodoId === todo.id ? (
+                        <>
+                          <div
+                            className="loader pulse"
+                            style={{ marginRight: 5 }}
+                          />{" "}
+                          Writing...
+                        </>
+                      ) : (
+                        "In Redis"
+                      )}
+                    </span>
+
                     <button onClick={() => moveToDatabase(todo.id)}>
                       📤 Move to Database
                     </button>
